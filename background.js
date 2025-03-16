@@ -75,5 +75,6 @@ chrome.action.onClicked.addListener(async (tab) => {
       target : {tabId : tab.id, allFrames : true},
       func : ProcessPage,
     });
+    chrome.action.setIcon({path: 'images/icon-128/icon-on.png', tabId: tab.id});
   }
 });
