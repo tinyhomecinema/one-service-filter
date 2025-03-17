@@ -1,24 +1,27 @@
 {
   "manifest_version": 3,
-  "name": "Letterboxd: Just One Service",
+  "name": "Letterboxd: One Service Only",
   "description": "On a Letterboxd watchlist filtered for a given streaming service, shows only the films available uniquely on that service.",
   "version": "1.0",
   "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["https://letterboxd.com/*"],
+      "js": ["content.js"]
+    }
+  ],
   "icons": {
-    "16": "images/icon-16/icon.png",
-    "32": "images/icon-32/icon.png",
-    "48": "images/icon-48/icon.png",
-    "128": "images/icon-128/icon.png"
+    "16": "res/icon-16.png",
+    "32": "res/icon-32.png",
+    "48": "res/icon-48.png",
+    "128": "res/icon-128.png"
   },
   "action": {
     "default_icon": {
-      "16": "images/icon-16/icon.png",
-      "32": "images/icon-32/icon.png",
-      "48": "images/icon-48/icon.png",
-      "128": "images/icon-128/icon.png"
+      "16": "res/icon-16.png",
+      "32": "res/icon-32.png",
+      "48": "res/icon-48.png",
+      "128": "res/icon-128.png"
     }
-  },
-  "background": {
-    "service_worker": "background.js"
   }
 }
