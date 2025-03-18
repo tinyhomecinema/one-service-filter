@@ -1,8 +1,6 @@
 (function () {
   "use strict";
 
-  console.log(document.body);
-
   // Checks if the current page is the watchlist and a service was selected
   if (!window.location.href.includes("/on/")
     || window.location.href.includes("/no-services/")
@@ -11,17 +9,37 @@
   return;
   }
 
-  var servicesSubMenu = document.getElementById('services-menu');
-  var newItem = document.createElement('LI');
-  var text = document.createTextNode('On selected service only');
-  var link = document.createElement('A');
-  newItem.setAttribute('class', '');
-  link.setAttribute('class', 'item');
-  link.setAttribute('style', 'cursor: pointer');
-  link.appendChild(text);
-  newItem.appendChild(link);
-  newItem.addEventListener('click', processPage);
-  servicesSubMenu.insertBefore(newItem, servicesSubMenu.children[3]);
+  var films;
+
+  if (window.location.href.includes("/watchlist/")) {
+    films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
+  } else {
+    films = document.getElementsByClassName('js-list-entries poster-list -p125 -grid film-list')[0];
+  }
+
+  // Remove nodes which are not film nodes
+  for (var i = films.childNodes.length-1; i >= 0; i--) {
+    var node = films.childNodes[i];
+    if (!node.attributes) {
+      films.removeChild(node);
+    }
+  }
+
+  var numberOfFilms = films.childNodes.length;
+
+  if (numberOfFilms > 0) {
+    var servicesSubMenu = document.getElementById('services-menu');
+    var newItem = document.createElement('LI');
+    var text = document.createTextNode('On selected service only');
+    var link = document.createElement('A');
+    newItem.setAttribute('class', '');
+    link.setAttribute('class', 'item');
+    link.setAttribute('style', 'cursor: pointer');
+    link.appendChild(text);
+    newItem.appendChild(link);
+    newItem.addEventListener('click', processPage);
+    servicesSubMenu.insertBefore(newItem, servicesSubMenu.children[3]);
+  }
 
   function processPage() {
 
@@ -31,7 +49,6 @@
     var servicesList = [];
     var servicesUrls = [];
     var currentService;
-    var currentServiceUrl;
     const pages = [];
 
     for (var i = 8; i < servicesMenu.length - 2; i++) {
@@ -39,38 +56,12 @@
       servicesUrls.push(servicesMenu[i].href);
       if (!servicesMenu[i].href) {
         currentService = servicesMenu[i].innerText;
-        if (window.location.href.includes("/list/")) {
-          currentServiceUrl = document.getElementsByTagName('meta')[5].content;
-        } else {
-          currentServiceUrl = document.getElementsByTagName('meta')[4].content;
-        }
-        console.log(currentServiceUrl);
       }
     }
 
     console.log("Current Service: " + currentService);
 
     if (currentService) {
-
-      var films;
-
-      if (window.location.href.includes("/watchlist/")) {
-        films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
-      } else {
-        films = document.getElementsByClassName('js-list-entries poster-list -p125 -grid film-list')[0];
-      }
-
-      console.log(films);
-
-      // Remove nodes which are not film nodes
-      for (var i = films.childNodes.length-1; i >= 0; i--) {
-        var node = films.childNodes[i];
-        if (!node.attributes) {
-          films.removeChild(node);
-        }
-      }
-
-      var numberOfFilms = films.childNodes.length;
 
       for (var i = 0; i < servicesUrls.length; i++) {
         if (servicesUrls[i]) {
@@ -105,11 +96,17 @@
         } catch {}
       }
 
-      var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
-      document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
+      var numberOfFilmsPhrase;
 
+      if (numberOfFilms > 1) {
+        numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+      } else {
+        numberOfFilmsPhrase = "The film in this page is only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+      }
+
+      document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
       newItem.removeEventListener('click', processPage);
-      link.setAttribute('href', currentServiceUrl);
+      link.setAttribute('style', 'cursor: default');
 
     }
   }
