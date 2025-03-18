@@ -7,7 +7,9 @@
   "content_scripts": [
     {
       "matches": ["https://letterboxd.com/*"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "include_globs": ["*/on/*"],
+      "exclude_globs": ["*/no-services/*", "*/favorite-services/*", "*/films/*"]
     }
   ],
   "icons": {
@@ -15,13 +17,5 @@
     "32": "res/icon-32.png",
     "48": "res/icon-48.png",
     "128": "res/icon-128.png"
-  },
-  "action": {
-    "default_icon": {
-      "16": "res/icon-16.png",
-      "32": "res/icon-32.png",
-      "48": "res/icon-48.png",
-      "128": "res/icon-128.png"
-    }
   }
 }

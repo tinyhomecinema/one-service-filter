@@ -1,16 +1,9 @@
 (function () {
   "use strict";
 
-  // Checks if the current page is the watchlist and a service was selected
-  if (!window.location.href.includes("/on/")
-    || window.location.href.includes("/no-services/")
-    || window.location.href.includes("/favorite-services/")
-    || window.location.href.includes("/films/")) {
-  return;
-  }
-
   var films;
 
+  // Get Services menu
   if (window.location.href.includes("/watchlist/")) {
     films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
   } else {
@@ -18,8 +11,8 @@
   }
 
   // Remove nodes which are not film nodes
-  for (var i = films.childNodes.length-1; i >= 0; i--) {
-    var node = films.childNodes[i];
+  for (let i = films.childNodes.length-1; i >= 0; i--) {
+    let node = films.childNodes[i];
     if (!node.attributes) {
       films.removeChild(node);
     }
@@ -27,47 +20,49 @@
 
   var numberOfFilms = films.childNodes.length;
 
+  // Create Services menu item to remove films
   if (numberOfFilms > 0) {
-    var servicesSubMenu = document.getElementById('services-menu');
+    var servicesMenu = document.getElementById('services-menu');
     var newItem = document.createElement('LI');
-    var text = document.createTextNode('On selected service only');
     var link = document.createElement('A');
+    const text = document.createTextNode('On selected service only');
     newItem.setAttribute('class', '');
     link.setAttribute('class', 'item');
     link.setAttribute('style', 'cursor: pointer');
     link.appendChild(text);
     newItem.appendChild(link);
     newItem.addEventListener('click', processPage);
-    servicesSubMenu.insertBefore(newItem, servicesSubMenu.children[3]);
+    servicesMenu.insertBefore(newItem, servicesMenu.children[3]);
   }
 
   function processPage() {
 
     newItem.setAttribute('class', ' smenu-subselected');
 
-    var servicesMenu = document.getElementById('services-menu').getElementsByClassName('item');
+    var servicesMenuItems = document.getElementById('services-menu').getElementsByClassName('item');
     var servicesList = [];
     var servicesUrls = [];
     var currentService;
-    const pages = [];
 
-    for (var i = 8; i < servicesMenu.length - 2; i++) {
-      servicesList.push(servicesMenu[i].innerText);
-      servicesUrls.push(servicesMenu[i].href);
-      if (!servicesMenu[i].href) {
-        currentService = servicesMenu[i].innerText;
+    // Get available services from menu
+    for (let i = 8; i < servicesMenuItems.length - 2; i++) {
+      servicesList.push(servicesMenuItems[i].innerText);
+      servicesUrls.push(servicesMenuItems[i].href);
+      if (!servicesMenuItems[i].href) {
+        currentService = servicesMenuItems[i].innerText;
       }
     }
 
     console.log("Current Service: " + currentService);
 
+    // If a service is selected, remove films
+    // which are available on other services
     if (currentService) {
-
-      for (var i = 0; i < servicesUrls.length; i++) {
+      for (let i = 0; i < servicesUrls.length; i++) {
         if (servicesUrls[i]) {
           removeFilms(servicesUrls[i], i);
-          // Run a second time due to some films
-          // not being removed in the first run
+          // Run a second time due to some films not
+          // being removed in the first run in some cases
           removeFilms(servicesUrls[i], i);
         }
       }
@@ -76,35 +71,39 @@
 
     async function removeFilms(url, index) {
 
+      // Get page content for other services
       let pageObject = await fetch(url);
       let pageText = await pageObject.text();
       let serviceName = servicesList[index];
 
-      for (var i = 0; i < films.childNodes.length; i++) {
-
+      // Check if film is in another service and remove it
+      for (let i = 0; i < films.childNodes.length; i++) {
         try {
-          var node = films.childNodes[i];
-
-          var filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-id').value;
-          var filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-name').value;
+          let node = films.childNodes[i];
+          let filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-id').value;
+          let filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-name').value;
 
           if (pageText.search(filmId) != -1) {
             films.removeChild(node);
             console.log("'" + filmName + "' removed. Available also on '" + serviceName + "'");
             numberOfFilms--;
           }
-        } catch {}
+        } catch(err) {
+          console.log("ERROR: Unable to remove film.");
+          console.log("ERROR: " + err);
+        }
       }
 
-      var numberOfFilmsPhrase;
 
+      // Updated list header phrase with the number of films available only on the selected service
       if (numberOfFilms > 1) {
-        numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+        var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
       } else {
-        numberOfFilmsPhrase = "The film in this page is only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+        var numberOfFilmsPhrase = "The film in this page is only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
       }
-
       document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
+
+      // Remove clickable property of menu item
       newItem.removeEventListener('click', processPage);
       link.setAttribute('style', 'cursor: default');
 
