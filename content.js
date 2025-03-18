@@ -1,10 +1,13 @@
 (function () {
   "use strict";
 
+  console.log(document.body);
+
   // Checks if the current page is the watchlist and a service was selected
-  if (!window.location.href.includes("watchlist/on")
-    || window.location.href.includes("no-services")
-  || window.location.href.includes("favorite-services")) {
+  if (!window.location.href.includes("/on/")
+    || window.location.href.includes("/no-services/")
+    || window.location.href.includes("/favorite-services/")
+    || window.location.href.includes("/films/")) {
   return;
   }
 
@@ -36,7 +39,12 @@
       servicesUrls.push(servicesMenu[i].href);
       if (!servicesMenu[i].href) {
         currentService = servicesMenu[i].innerText;
-        currentServiceUrl = document.getElementsByTagName('meta')[4].content;
+        if (window.location.href.includes("/list/")) {
+          currentServiceUrl = document.getElementsByTagName('meta')[5].content;
+        } else {
+          currentServiceUrl = document.getElementsByTagName('meta')[4].content;
+        }
+        console.log(currentServiceUrl);
       }
     }
 
@@ -44,7 +52,15 @@
 
     if (currentService) {
 
-      var films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
+      var films;
+
+      if (window.location.href.includes("/watchlist/")) {
+        films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
+      } else {
+        films = document.getElementsByClassName('js-list-entries poster-list -p125 -grid film-list')[0];
+      }
+
+      console.log(films);
 
       // Remove nodes which are not film nodes
       for (var i = films.childNodes.length-1; i >= 0; i--) {
@@ -73,8 +89,6 @@
       let pageText = await pageObject.text();
       let serviceName = servicesList[index];
 
-      var films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
-
       for (var i = 0; i < films.childNodes.length; i++) {
 
         try {
@@ -91,7 +105,7 @@
         } catch {}
       }
 
-      var numberOfFilmsPhrase = "There are " + numberOfFilms + " films in this list only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+      var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
       document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
 
       newItem.removeEventListener('click', processPage);

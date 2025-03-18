@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Letterboxd: One Service Only",
-  "description": "On a Letterboxd watchlist filtered for a given streaming service, shows only the films available uniquely on that service.",
+  "name": "1 Service Filter for Letterboxd Watchlist",
+  "description": "On a Letterboxd Watchlist filtered for a given streaming service, shows only the films available uniquely on that service.",
   "version": "1.0",
   "permissions": ["activeTab", "scripting"],
   "content_scripts": [
