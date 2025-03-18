@@ -94,7 +94,6 @@
         }
       }
 
-
       // Updated list header phrase with the number of films available only on the selected service
       if (numberOfFilms > 1) {
         var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
