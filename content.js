@@ -17,7 +17,12 @@
     films = document.getElementsByClassName('js-list-entries poster-list -p125 -grid film-list')[0];
   }
 
-  numberOfFilms = films.childNodes.length;
+  // If there are no films on the list for the selected service, end the script
+  try {
+    numberOfFilms = films.childNodes.length;
+  } catch {
+    return;
+  }
 
   // Remove nodes which are not film nodes
   for (let i = numberOfFilms-1; i >= 0; i--) {
@@ -106,10 +111,14 @@
 
       // Updated list header phrase with the number of films available only on the selected service
       if (numberOfFilms > 1) {
-        var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+        var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on ";
+      } else if (numberOfFilms == 1) {
+        var numberOfFilmsPhrase = "The film in this page is only available on ";
       } else {
-        var numberOfFilmsPhrase = "The film in this page is only available on " + currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+        var numberOfFilmsPhrase = "No films in this page are only available on ";
       }
+      numberOfFilmsPhrase += currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+
       document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
 
       // Remove clickable property of menu item
