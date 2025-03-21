@@ -49,25 +49,34 @@
     servicesMenu.insertBefore(newItem, servicesMenu.children[3]);
   }
 
+  var servicesMenuItems = document.getElementById('services-menu').getElementsByClassName('item');
+  var servicesList = [];
+  var servicesUrls = [];
+  var currentService;
+
+  // Get available services from menu
+  for (let i = 8; i < servicesMenuItems.length - 2; i++) {
+    servicesList.push(servicesMenuItems[i].innerText);
+    servicesUrls.push(servicesMenuItems[i].href);
+    if (!servicesMenuItems[i].href) {
+      currentService = servicesMenuItems[i].innerText;
+    }
+  }
+
+  var lastService = localStorage.getItem("lastService");
+
+  console.log("Last Service: " + lastService);
+  console.log("Current Service: " + currentService);
+
+  if (currentService == lastService) {
+    processPage();
+  }
+
   function processPage() {
 
+    localStorage.setItem("lastService", currentService);
+
     newItem.setAttribute('class', ' smenu-subselected');
-
-    var servicesMenuItems = document.getElementById('services-menu').getElementsByClassName('item');
-    var servicesList = [];
-    var servicesUrls = [];
-    var currentService;
-
-    // Get available services from menu
-    for (let i = 8; i < servicesMenuItems.length - 2; i++) {
-      servicesList.push(servicesMenuItems[i].innerText);
-      servicesUrls.push(servicesMenuItems[i].href);
-      if (!servicesMenuItems[i].href) {
-        currentService = servicesMenuItems[i].innerText;
-      }
-    }
-
-    console.log("Current Service: " + currentService);
 
     // If a service is selected, remove films
     // which are available on other services
