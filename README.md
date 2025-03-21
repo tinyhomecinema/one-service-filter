@@ -1,10 +1,10 @@
 # 'One Service Filter' for Letterboxd
 
-This a Chrome extension for [Letterboxd](https://letterboxd.com/), to filter a list or watchlist, showing only the films available on the selected streaming service. This is particularly useful, for example, for when you subscribe to a  service for just a month or two and want to prioritize the films which are available only on that sevice.
+This is a Chrome extension for [Letterboxd](https://letterboxd.com/), to filter a list or watchlist, showing the films only available on the selected streaming service. This is particularly useful, for example, for when you subscribe to a service for just a month or two and want to prioritize the films which are available only on that sevice.
 
 ## Installation
 
-This extension is not available on the [Chrome Web Store](https://chromewebstore.google.com/), so the only way to use it is by cloning this repository into your local computer and load it on Chrome:
+This extension is not available on the [Chrome Web Store](https://chromewebstore.google.com/) yet, so the only way to use it by now is by cloning this repository into your local computer and load it on Chrome:
 
 ```
 git clone https://github.com/HaraldoFilho/OneServiceFilter.git
@@ -24,7 +24,7 @@ _Sign In_ to [Letterboxd](https://letterboxd.com/) and go to a Watchlist or list
 
 ![SERVICE menu](images/img_3.png)
 
-Open the menu again and you will se an aditional option: **On selected service only**. 
+Open the menu again and you will se an aditional option: **On selected service only**.
 
 ![Additional option](images/img_4.png)
 
@@ -33,7 +33,6 @@ Click on it and the films available on other services will be removed from the l
 ![Filtered list](images/img_5.png)
 
 ### Some important notes
-- The extension doesn't work if you are not signed in.
-- The films are removed only from the current page you are visiting, if the list has more than one page you will need to execute these steps again for every page you visit. The films counting before you run the filter is for the entire list, but after is only for the page.
-
-
+- **The extension doesn't work if you are not signed in.**
+- The films are removed only from the current page you are visiting, but if the list has more than one page and the filter is active, every list page you visit will show the films which are only available on the selected service.
+- The films counting after you turn on the filter is only for the current page you are visiting, not for the entire list.

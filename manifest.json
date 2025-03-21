@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "One Service Filter for Letterboxd",
-  "description": "Filter to show, in a Letterboxd list or watchlist, only the films available on the selected streaming service.",
+  "description": "Filter to show, in a Letterboxd list or watchlist, the films only available on the selected streaming service.",
   "version": "1.0",
   "content_scripts": [
     {
