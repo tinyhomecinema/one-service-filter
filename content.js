@@ -1,6 +1,19 @@
 (function () {
   "use strict";
 
+  var pageUrl = window.location.href
+  console.log("Page url:" + pageUrl);
+
+  // Checks if the current page is the watchlist
+  if (!pageUrl.includes("/on/") || pageUrl.includes("/no-services/")
+    || pageUrl.includes("/favorite-services/") || pageUrl.includes("/films/")) {
+    localStorage.setItem("lastService", "");
+    console.log("Menu item not loaded, page url is invalid.")
+    return;
+  }
+
+  console.log("Menu item loaded, page url is valid.")
+
   // If user is not logged in, do not load menu item
   if (!document.body.getAttributeNode('class').value.includes("logged-in")) {return}
 
@@ -70,6 +83,8 @@
 
   if (currentService == lastService) {
     processPage();
+  } else {
+    localStorage.setItem("lastService", "");
   }
 
   function processPage() {

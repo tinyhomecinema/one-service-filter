@@ -6,13 +6,7 @@
   "content_scripts": [
     {
       "matches": ["https://letterboxd.com/*"],
-      "js": ["content.js"],
-      "include_globs": ["*/on/*"],
-      "exclude_globs": [
-        "*/no-services/*",
-        "*/favorite-services/*",
-        "*/films/*"
-      ]
+      "js": ["content.js"]
     }
   ],
   "icons": {
