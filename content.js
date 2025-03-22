@@ -1,12 +1,11 @@
 (function () {
   "use strict";
 
-  var pageUrl = window.location.href
-  console.log("Page url:" + pageUrl);
+  var url = window.location.href
 
   // Checks if the current page is the watchlist
-  if (!pageUrl.includes("/on/") || pageUrl.includes("/no-services/")
-    || pageUrl.includes("/favorite-services/") || pageUrl.includes("/films/")) {
+  if (!url.includes("/on/") || url.includes("/no-services/")
+    || url.includes("/favorite-services/") || url.includes("/films/")) {
     localStorage.setItem("lastService", "");
     console.log("Menu item not loaded, page url is invalid.")
     return;
@@ -105,50 +104,71 @@
 
       async function removeFilms(url, index) {
 
-        // Get page content for other services
-        var pageObject = await fetch(url);
-        var pageText = await pageObject.text();
-        var serviceName = servicesList[index];
+        var validPage = true;
+        var pageCount = 0;
+        var pageUrl;
 
-        var node ;
-        var filmId;
-        var filmName;
+        while (validPage) {
 
-        // Check if film is in another service and remove it
-        for (var i = films.childNodes.length-1; i >= 0; i--) {
-          try {
-            node = films.childNodes[i];
-            filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-id').value;
-            if (pageText.search(filmId) != -1) {
-              films.removeChild(node);
+          pageCount++;
+
+          pageUrl = url + "page/" + pageCount + "/";
+
+          // Get page content for other services
+          var pageObject = await fetch(pageUrl);
+          var pageText = await pageObject.text();
+          var serviceName = servicesList[index];
+
+          // Check if page is invalid, i.e. it is the page n+1 on a list with n pages
+          if (pageCount > 1 && pageText.search('paginate-current') == -1) {
+            validPage = false;
+          }
+
+          if (validPage) {
+
+            var node ;
+            var filmId;
+            var filmName;
+
+            // Check if film is in another service and remove it
+            for (var i = films.childNodes.length-1; i >= 0; i--) {
               try {
-                filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-name').value;
-              } catch {filmName = filmId}
-              console.log("'" + filmName + "' removed. Available also on '" + serviceName + "'");
-              numberOfFilms--;
+                node = films.childNodes[i];
+                filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-id').value;
+                if (pageText.search(filmId) != -1) {
+                  films.removeChild(node);
+                  try {
+                    filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-name').value;
+                  } catch {filmName = filmId}
+                  console.log("'" + filmName + "' removed. Also available on '" + serviceName + "'");
+                  numberOfFilms--;
+                }
+              } catch(err) {
+                console.log("ERROR: Unable to remove '" + filmName + "'.");
+                console.log("ERROR: " + err);
+              }
             }
-          } catch(err) {
-            console.log("ERROR: Unable to remove '" + filmName + "'.");
-            console.log("ERROR: " + err);
+
+            // Updated list header phrase with the number of films available only on the selected service
+            if (numberOfFilms > 1) {
+              var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on ";
+            } else if (numberOfFilms == 1) {
+              var numberOfFilmsPhrase = "The film in this page is only available on ";
+            } else {
+              var numberOfFilmsPhrase = "No films in this page are only available on ";
+            }
+            numberOfFilmsPhrase += currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
+
+            document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
+
+            // Remove clickable property of menu item
+            newItem.removeEventListener('click', processPage);
+            link.setAttribute('style', 'cursor: default');
+
+          } else {
+            validPage = false;
           }
         }
-
-        // Updated list header phrase with the number of films available only on the selected service
-        if (numberOfFilms > 1) {
-          var numberOfFilmsPhrase = "The " + numberOfFilms + " films in this page are only available on ";
-        } else if (numberOfFilms == 1) {
-          var numberOfFilmsPhrase = "The film in this page is only available on ";
-        } else {
-          var numberOfFilmsPhrase = "No films in this page are only available on ";
-        }
-        numberOfFilmsPhrase += currentService + " (<a href=\"\/settings\/stores\/\">edit&nbsp;favorites</a>)."
-
-        document.getElementsByClassName('ui-block-heading')[0].innerHTML = numberOfFilmsPhrase;
-
-        // Remove clickable property of menu item
-        newItem.removeEventListener('click', processPage);
-        link.setAttribute('style', 'cursor: default');
-
       }
     }
 
