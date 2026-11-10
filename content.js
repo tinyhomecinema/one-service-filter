@@ -2,11 +2,10 @@
   "use strict";
 
   var state = localStorage.getItem("state");
-
   var url = window.location.href
 
   // Checks if the current page is the watchlist
-  if (!url.includes("/on/") || url.includes("/no-services/") || url.includes("/favorite-services/") || url.includes("/films/")) {
+  if (!url.includes("/watchlist/")) {
     localStorage.setItem("lastService", "");
     console.log("Menu item not loaded, page url is invalid.")
     return;
@@ -21,13 +20,9 @@
   var numberOfFilms;
 
   // Get Services menu
-  if (window.location.href.includes("/watchlist/")) {
-    films = document.getElementsByClassName('poster-list -p125 -grid -constrained')[0];
-    if (!films) {
-      films = document.getElementsByClassName('poster-list -p125 -grid -scaled128')[0];
-    }
-  } else {
-    films = document.getElementsByClassName('js-list-entries poster-list -p125 -grid film-list')[0];
+  films = document.getElementsByClassName('grid -p125 -constrained')[0];
+  if (!films) {
+    films = document.getElementsByClassName('poster-list -p125 -grid -scaled128')[0];
   }
 
   // If there are no films on the list for the selected service, end the script
@@ -48,8 +43,9 @@
   numberOfFilms = films.childNodes.length;
 
   // Create Services menu item to remove films
+  var servicesMenu = document.getElementById('services-menu');
+
   if (numberOfFilms > 0) {
-    var servicesMenu = document.getElementById('services-menu');
     var newItem = document.createElement('LI');
     var link = document.createElement('A');
     const text = document.createTextNode('On selected service only');
@@ -62,7 +58,7 @@
     servicesMenu.insertBefore(newItem, servicesMenu.children[3]);
   }
 
-  var servicesMenuItems = document.getElementById('services-menu').getElementsByClassName('item');
+  var servicesMenuItems = servicesMenu.getElementsByClassName('item');
   var servicesList = [];
   var servicesUrls = [];
   var serviceName;
@@ -143,6 +139,7 @@
         if (validPage) {
 
           var node ;
+          var posterIdentifier;
           var filmId;
           var filmName;
 
@@ -151,26 +148,19 @@
             try {
               node = films.childNodes[i];
               try {
-                filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-id').value;
-              } catch {
-                try {
-                  filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-uid').value;
+                filmId = node.getElementsByTagName('div')[0].getAttributeNode('data-item-slug').value;
                 } catch (err) {
                   console.log("ERROR: Unable to get film id");
                   console.log("ERROR: " + err);
                   continue;
-                }
               }
 
               if (pageText.search(filmId) != -1) {
                 films.removeChild(node);
                 try {
-                  filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-name').value;
-                } catch {
-                  try {
-                    filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-film-slug').value;
-                  } catch {filmName = filmId}
-                }
+                  filmName = node.getElementsByTagName('div')[0].getAttributeNode('data-item-full-display-name').value;
+                } catch {filmName = filmId}
+
                 console.log("'" + filmName + "' removed. Also available on '" + serviceName + "'");
                 numberOfFilms--;
               }
